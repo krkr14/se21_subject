@@ -1,0 +1,10 @@
+void make_board(void);
+int pos_dir(int row,int column,int dir_r,int dir_c,int color);
+int pos_place(int row,int column,int color);
+int flag(void);
+void show_board(void);
+void get_data(int *row,int *column);
+void put_board(int row,int column);
+int do_round(void);
+void loop_game(void);
+void score(void);
