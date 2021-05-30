@@ -5,6 +5,7 @@
 #include<ncurses.h>
 #include<locale.h>
 #include"f1.h"
+#include"minMax.h"
 
 
 /*// ////////////////////////////////////////////////
@@ -243,11 +244,11 @@ int do_round(){
 	switch(player){
 		case -1:
 			mvprintw(menue++, 0, "黒の手番です。\n");
-			get_data(&row,&column);
+			ai_random(&row, &column);
 			break;
 		case 1:
 			mvprintw(menue++, 0, "白の手番です。\n");
-			get_data(&row,&column);
+			computer_get_data(board, &row,&column);
 			break;
 		default :
 		break;
@@ -324,12 +325,19 @@ void score(){
 	show_board();
 
 	/*結果の表示*/
-	printf("先手%d石,後手%d石\n",count_b,count_w);
+	mvprintw(menue++, 0, "先手%d石,後手%d石",count_b,count_w);
 	if(count_b > count_w){
-		printf("先手の勝利\n");
+		mvprintw(menue++, 0, "先手の勝利");
 	}else if(count_b < count_w){
-		printf("後手の勝利\n");
+		mvprintw(menue++, 0, "後手の勝利");
 	}else{
-		printf("引き分け\n");
+		mvprintw(menue++, 0, "引き分け");
+	}
+	refresh();
+	mvprintw(menue++, 0, "終了(q)：");
+	while(1){
+		char c;
+		scanw("%c", &c);
+		if (c == 'q') break;
 	}
 }
