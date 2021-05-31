@@ -7,4 +7,4 @@ void get_data(int *row,int *column);
 void put_board(int row,int column);
 int do_round(void);
 void loop_game(void);
-void score(void);
+int score(int flag);

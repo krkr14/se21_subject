@@ -303,8 +303,9 @@ void loop_game(){
 //結果表示
 //////////////////////////////////////////////////*/
 
-void score(){
+int score(int flag){
 	int i, j;
+	int result;
 	/*countは石の数を数える*/
 	int count_b = 0;
 	int count_w = 0;
@@ -328,16 +329,25 @@ void score(){
 	mvprintw(menue++, 0, "先手%d石,後手%d石",count_b,count_w);
 	if(count_b > count_w){
 		mvprintw(menue++, 0, "先手の勝利");
+		result = 0;
 	}else if(count_b < count_w){
 		mvprintw(menue++, 0, "後手の勝利");
+		result = 1;
 	}else{
 		mvprintw(menue++, 0, "引き分け");
+		result = 2;
 	}
 	refresh();
-	mvprintw(menue++, 0, "終了(q)：");
-	while(1){
-		char c;
-		scanw("%c", &c);
-		if (c == 'q') break;
+
+	if (flag){
+		mvprintw(menue++, 0, "終了(q)：");
+		while(1){
+			char c;
+			scanw("%c", &c);
+			if (c == 'q') break;
+		}
+		return 0;
+	} else {
+		return result;
 	}
 }

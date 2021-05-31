@@ -200,14 +200,14 @@ int  minMax(int board[10][10], int ai, int level){
                 /* 子ノードとこのノードの評価値を比較する*/
                 if (ai) {
                     /* AIのノードなら子ノードの中で最大の評価値を選ぶ*/
-                    if (childValue > value) {
+                    if (childValue >= value) {
                         value = childValue;
                         bestX = x;
                         bestY = y;
                     }
                 } else {
                     /* プレイヤーのノードなら子ノードの中で最小の評価値を選ぶ*/
-                    if (childValue < value) {
+                    if (childValue <= value) {
                         value = childValue;
                         bestX = x;
                         bestY = y;
