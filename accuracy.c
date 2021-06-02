@@ -4,6 +4,8 @@
 #include<unistd.h>
 #include<ncurses.h>
 #include<locale.h>
+#include <time.h>
+#include <sys/time.h>
 #include"f1.h"
 
 
@@ -22,10 +24,12 @@ int main(void){
 	/* カーソルキーを利用 */  
 	keypad(stdscr, TRUE); 
 
-	for (i=0; i<1000; i++){
+	for (i=0; i<100; i++){
 
 		/*乱数用*/
-		srand((int)time(NULL));
+		struct timeval now;
+		gettimeofday(&now, NULL); 
+		srand(now.tv_usec);
 
 		/*盤面を作る*/
 		make_board();

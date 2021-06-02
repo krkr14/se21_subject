@@ -1,7 +1,8 @@
 #include<stdio.h>
+#include<stdlib.h>
 #define MIN_VALUE -1001001
 #define MAX_VALUE 1001001
-#define SEARCH_LEVEL 3
+#define SEARCH_LEVEL 7
 
 struct UNDO {
     int x;
@@ -158,7 +159,7 @@ int flag_undo(int board[10][10]){
 
 
 
-int  minMax(int board[10][10], int ai, int level){
+int  alphaBeta(int board[10][10], int ai, int level, int alpha, int beta){
 
     int x, y;
     /* ノードの評価値*/
@@ -174,6 +175,7 @@ int  minMax(int board[10][10], int ai, int level){
     if (level == 0 || flag_undo(board)) {
         return value_board(board);
     }
+
 
     if (ai == 1) {
         /* AIの手番では最大の評価値を見つけたいので最初に最小値をセットしておく*/
@@ -196,22 +198,36 @@ int  minMax(int board[10][10], int ai, int level){
                 
                 /* 子ノードの評価値を計算（再帰）
                  今度は相手の番なのでflagが逆転する*/
-                childValue = minMax(board, -ai, level - 1);
-
+                childValue = alphaBeta(board, -ai, level - 1, alpha, beta);
+    
                 /* 子ノードとこのノードの評価値を比較する*/
                 if (ai == 1) {
                     /* AIのノードなら子ノードの中で最大の評価値を選ぶ*/
                     if (childValue >= value) {
                         value = childValue;
+                        alpha = value;
                         bestX = x;
                         bestY = y;
+                    }
+
+                    /*βカット*/
+                    if (value > beta){
+                        undoBoard(board, undo);
+                        return value;
                     }
                 } else {
                     /* プレイヤーのノードなら子ノードの中で最小の評価値を選ぶ*/
                     if (childValue <= value) {
                         value = childValue;
+                        beta = value;
                         bestX = x;
                         bestY = y;
+                    }
+
+                    /*αカット*/
+                    if (value < alpha){
+                        undoBoard(board, undo);
+                        return value;
                     }
                 }
                 /* 打つ前に戻す*/
@@ -230,7 +246,7 @@ int  minMax(int board[10][10], int ai, int level){
 }
 
 void computer_get_data(int board[10][10], int *row, int *column){
-    int tmp = minMax(board, 1, SEARCH_LEVEL);
+    int tmp = alphaBeta(board, 1, SEARCH_LEVEL, MIN_VALUE, MAX_VALUE);
     *row = tmp % 64;
     *column = tmp / 64;
 }
@@ -250,6 +266,5 @@ int main(){
     int row, column;
 
     computer_get_data(board, &row, &column);
-    printf("%d %d\n", row, column);
     return 0;
 }*/

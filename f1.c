@@ -4,8 +4,7 @@
 #include<unistd.h>
 #include<ncurses.h>
 #include<locale.h>
-#include"f1.h"
-#include"minMax.h"
+#include"alphaBeta.h"
 
 
 /*// ////////////////////////////////////////////////
@@ -244,7 +243,7 @@ int do_round(){
 	switch(player){
 		case -1:
 			mvprintw(menue++, 0, "黒の手番です。\n");
-			ai_random(&row, &column);
+			get_data(&row, &column);
 			break;
 		case 1:
 			mvprintw(menue++, 0, "白の手番です。\n");

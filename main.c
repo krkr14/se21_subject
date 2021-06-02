@@ -4,6 +4,8 @@
 #include<unistd.h>
 #include<ncurses.h>
 #include<locale.h>
+#include <time.h>
+#include <sys/time.h>
 #include"f1.h"
 
 
@@ -12,6 +14,7 @@
 //////////////////////////////////////////////////*/
 
 int main(void){
+	struct timeval now;
 
 	/*window作成*/
 	setlocale(LC_ALL, "");
@@ -22,7 +25,8 @@ int main(void){
 
 
 	/*乱数用*/
-	srand((int)time(NULL));
+	gettimeofday(&now, NULL); 
+	srand(now.tv_usec);
 
 	/*盤面を作る*/
 	make_board();
