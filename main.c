@@ -1,12 +1,13 @@
-#include<stdio.h>
-#include<time.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<ncurses.h>
-#include<locale.h>
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ncurses.h>
+#include <locale.h>
 #include <time.h>
 #include <sys/time.h>
-#include"f1.h"
+#include "f1.h"
+#include "rules.h"
 
 
 /*//////////////////////////////////////////////////
@@ -14,7 +15,6 @@
 //////////////////////////////////////////////////*/
 
 int main(void){
-	struct timeval now;
 
 	/*window作成*/
 	setlocale(LC_ALL, "");
@@ -23,18 +23,37 @@ int main(void){
 	/* カーソルキーを利用 */  
 	keypad(stdscr, TRUE); 
 
+	while (1){
+		struct timeval now;
+		int input;
 
-	/*乱数用*/
-	gettimeofday(&now, NULL); 
-	srand(now.tv_usec);
+		clear();
+		refresh();
 
-	/*盤面を作る*/
-	make_board();
+		move(0,0);
+		printw("0でAI対戦，1でルール表示，2で終了\n");
+		refresh();
+		scanw("%d", &input);
 
-	/*繰り返し部分*/
-	loop_game();
+		if (input == 0){
+			/*乱数用*/
+			gettimeofday(&now, NULL); 
+			srand(now.tv_usec);
+			/*盤面を作る*/
+			clear();
+			refresh();
+			make_board();
+			
+			/*繰り返し部分*/
+			loop_game();
 
-	score(1);
+			score(1);
+		} else if (input == 1){
+			printRules();
+		} else if (input == 2){
+			break;
+		}
+	}
 
 	/*window削除*/
 	endwin();

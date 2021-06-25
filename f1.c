@@ -142,6 +142,10 @@ int flag(){
 
 void show_board(){
 	int i, j;
+
+	start_color();
+	init_pair(COLOR_BLUE, COLOR_BLACK, COLOR_GREEN);
+	init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_GREEN);
 	/*ループで各行を1列ずつ表示*/
 	for(i = 0; i < 10; i++){
 		for(j = 0; j < 10; j++){
@@ -149,15 +153,19 @@ void show_board(){
 			move(i, 2 * j);
 			switch(board[i][j]){
 				case -1:
-					printw("○");
+					attrset(COLOR_PAIR(COLOR_BLUE)); 
+					printw("●");
 					break;
 				case 1:
+					attrset(COLOR_PAIR(COLOR_WHITE)); 
 					printw("●");
 					break;
 				case 0:
+					attrset(COLOR_PAIR(COLOR_BLUE)); 
 					printw("ー");
 					break;
 				case 2:
+					attrset(COLOR_PAIR(COLOR_BLUE)); 
 					printw("＃");
 					break;
 				default:
@@ -165,6 +173,8 @@ void show_board(){
 			}
 		}
 	}
+	init_pair(COLOR_GREEN, COLOR_WHITE, COLOR_BLACK);
+	attrset(COLOR_PAIR(COLOR_GREEN)); 
 	refresh();
 }
 
@@ -191,12 +201,19 @@ void get_data(int *row,int *column){
 	mvprintw(menue++, 0, "入力してください(改行で終了)");
 
 	while(ch != '\n') {
-	move(*row, 2 * (*column)); 
-    ch = getch();  
-    if (ch == KEY_UP && *row > 1) *row = *row - 1;  
-    if (ch == KEY_RIGHT && *column < 8) *column = *column + 1;  
-    if (ch == KEY_DOWN && *row < 8) *row = *row + 1;  
-    if (ch == KEY_LEFT && *column > 1) *column = *column - 1;
+		move(*row, 2 * (*column)); 
+		ch = getch();  
+		if (ch == KEY_UP && *row > 1) *row = *row - 1;
+		else if (ch == KEY_UP && *row == 1) *row = 8;
+
+		if (ch == KEY_RIGHT && *column < 8) *column = *column + 1; 
+		else if (ch == KEY_RIGHT && *column == 8) *column = 1;
+
+		if (ch == KEY_DOWN && *row < 8) *row = *row + 1;  
+		else if (ch == KEY_DOWN && *row == 8) *row = 1;
+
+		if (ch == KEY_LEFT && *column > 1) *column = *column - 1;
+		else if (ch == KEY_LEFT && *column == 1) *column = 8;
 	}  
 }
 
@@ -228,6 +245,25 @@ void put_board(int row,int column){
 	board[row][column] = player;
 }
 
+/*置ける石の場所の背景を白く塗る*/
+void can_put(){
+	int i, j;
+	start_color();
+	init_pair(COLOR_RED, COLOR_BLACK, COLOR_WHITE);
+	attrset(COLOR_PAIR(COLOR_WHITE));
+	for (i=1; i<=8; i++){
+		for (j=1; j<=8; j++){
+			if (pos_place(i, j, player)){
+				move(i, 2 * j); 
+				printw("ー");
+			}
+		}
+	}
+	init_pair(COLOR_RED, COLOR_WHITE, COLOR_BLACK);
+	attrset(COLOR_PAIR(COLOR_RED)); 
+	refresh();
+}
+
 
 
 /*//////////////////////////////////////////////////
@@ -243,6 +279,7 @@ int do_round(){
 	switch(player){
 		case -1:
 			mvprintw(menue++, 0, "黒の手番です。\n");
+			can_put();
 			get_data(&row, &column);
 			break;
 		case 1:
