@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #define MIN_VALUE -1001001
 #define MAX_VALUE 1001001
-#define SEARCH_LEVEL 7
+#define SEARCH_LEVEL 9
 
 struct UNDO {
     int x;

@@ -89,16 +89,16 @@ int pos_place(int row,int column,int color){
 	/*場所が空であるかどうか*/
 	if(board[row][column] == 0){
 
-	/*全方向を探索*/
-	for(i = -1; i < 2; i++){
-		for(j = -1; j < 2; j++){
-			if(pos_dir(row,column,i,j,color)){
+		/*全方向を探索*/
+		for(i = -1; i < 2; i++){
+			for(j = -1; j < 2; j++){
+				if(pos_dir(row,column,i,j,color)){
 
-				/*配置可能であれば1を返す*/
-				return 1;
+					/*配置可能であれば1を返す*/
+					return 1;
+				}
 			}
 		}
-	}
 	}
 	return 0;
 }
@@ -146,6 +146,8 @@ void show_board(){
 	start_color();
 	init_pair(COLOR_BLUE, COLOR_BLACK, COLOR_GREEN);
 	init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_GREEN);
+	init_pair(COLOR_MAGENTA, COLOR_BLACK, COLOR_RED);
+	init_pair(COLOR_YELLOW, COLOR_WHITE, COLOR_BLUE);
 	/*ループで各行を1列ずつ表示*/
 	for(i = 0; i < 10; i++){
 		for(j = 0; j < 10; j++){
@@ -167,6 +169,16 @@ void show_board(){
 				case 2:
 					attrset(COLOR_PAIR(COLOR_BLUE)); 
 					printw("＃");
+					break;
+				case 3:
+					attrset(COLOR_PAIR(COLOR_MAGENTA)); 
+					printw("●");
+					board[i][j] = -1;
+					break;
+				case 4:
+					attrset(COLOR_PAIR(COLOR_YELLOW)); 
+					printw("●");
+					board[i][j] = 1;
 					break;
 				default:
 					break;
@@ -197,9 +209,10 @@ void ai_random(int *row,int *column){
 
 void get_data(int *row,int *column){
 	int ch =0;
-
+	
 	mvprintw(menue++, 0, "入力してください(改行で終了)");
-
+	/*キー入力を表示しない*/
+	noecho();
 	while(ch != '\n') {
 		move(*row, 2 * (*column)); 
 		ch = getch();  
@@ -214,7 +227,9 @@ void get_data(int *row,int *column){
 
 		if (ch == KEY_LEFT && *column > 1) *column = *column - 1;
 		else if (ch == KEY_LEFT && *column == 1) *column = 8;
-	}  
+	}
+	/*キー入力を表示する*/
+	echo();
 }
 
 
@@ -242,7 +257,12 @@ void put_board(int row,int column){
 	}
 
 	/*石を追加する*/
-	board[row][column] = player;
+	/*先手が言って先に置いたマスに３，後行が４*/
+	if (player == -1){
+		board[row][column] = 3;
+	} else {
+		board[row][column] = 4;
+	}
 }
 
 /*置ける石の場所の背景を白く塗る*/
@@ -270,7 +290,7 @@ void can_put(){
 //一手分実行
 //////////////////////////////////////////////////*/
 
-int do_round(){
+int do_round(int selectOpponents){
 
 	int row = 1;
 	int column = 1;
@@ -284,7 +304,12 @@ int do_round(){
 			break;
 		case 1:
 			mvprintw(menue++, 0, "白の手番です。\n");
-			computer_get_data(board, &row,&column);
+			can_put();
+			if (selectOpponents){
+				computer_get_data(board, &row,&column);
+			} else {
+				get_data(&row, &column);
+			}
 			break;
 		default :
 		break;
@@ -299,7 +324,7 @@ int do_round(){
 
 	/*配置不可能であればもう一度入力させる*/
 	mvprintw(menue++, 0, "(%d, %d)には配置できません。\n",row,column);
-	return do_round();
+	return do_round(selectOpponents);
 }
 
 
@@ -307,7 +332,7 @@ int do_round(){
 /*//////////////////////////////////////////////////
 //ゲームの繰り返し実行
 //////////////////////////////////////////////////*/
-void loop_game(){
+void loop_game(int selectOpponents){
 
 	while(1){
 
@@ -320,7 +345,7 @@ void loop_game(){
 		show_board();
 
 		/*配置*/
-		do_round();
+		do_round(selectOpponents);
 
 		/*手番交代*/
 		player *= -1;

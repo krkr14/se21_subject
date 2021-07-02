@@ -5,6 +5,6 @@ int flag(void);
 void show_board(void);
 void get_data(int *row,int *column);
 void put_board(int row,int column);
-int do_round(void);
-void loop_game(void);
+int do_round(int selectOpponents);
+void loop_game(int selectOpponents);
 int score(int flag);

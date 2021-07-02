@@ -25,17 +25,31 @@ int main(void){
 
 	while (1){
 		struct timeval now;
-		int input;
+		int selectMode;
 
 		clear();
 		refresh();
 
 		move(0,0);
-		printw("0でAI対戦，1でルール表示，2で終了\n");
+		printw("0で対戦モード，1でルール表示，2で終了：");
 		refresh();
-		scanw("%d", &input);
+		scanw("%d", &selectMode);
 
-		if (input == 0){
+		if (selectMode == 0){
+			int selectOpponents;
+			clear();
+			refresh();
+			move(0,0);
+
+			printw("二人で対戦(0)かAI対戦(1)か選択してください：");
+			scanw("%d", &selectOpponents);
+			if (selectOpponents != 0 && selectOpponents != 1){
+				clear();
+				refresh();
+				move(0,0);
+				printw("対戦モードを0か1で入力してください：");
+				continue;
+			}
 			/*乱数用*/
 			gettimeofday(&now, NULL); 
 			srand(now.tv_usec);
@@ -45,12 +59,12 @@ int main(void){
 			make_board();
 			
 			/*繰り返し部分*/
-			loop_game();
+			loop_game(selectOpponents);
 
 			score(1);
-		} else if (input == 1){
+		} else if (selectMode == 1){
 			printRules();
-		} else if (input == 2){
+		} else if (selectMode == 2){
 			break;
 		}
 	}
@@ -60,6 +74,3 @@ int main(void){
 
 	return 0;
 }
-
-/*参照 【C言語】標準入出力でオセロ作ってみた【雑記】
-https://tora-k.com/2019/06/17/othello/*/ 
